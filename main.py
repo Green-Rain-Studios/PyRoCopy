@@ -58,6 +58,7 @@ run_button.grid(row=3, column=0, sticky='w')
 
 output_text = tk.Text(root, width=30, height=10)
 output_text.grid(row=4, column=0, sticky='nsew')
+output_text.config(state='disabled')
 
 # Update the run_robocopy function
 def run_robocopy():
@@ -71,6 +72,17 @@ def run_robocopy():
     command = f'robocopy "{source}" "{destination}" {option}'
     if int(threads) > 1:
         command += f' /MT:{threads}'
-    subprocess.run(command, shell=True)
+    output_text.config(state='normal')
+    output_text.insert(tk.END, "Starting copy operation...\n")
+    process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    for line in process.stdout:
+        output_text.insert(tk.END, line)
+    for line in process.stderr:
+        output_text.insert(tk.END, line)
+    output_text.insert(tk.END, "Copy operation completed.\n")
+    output_text.config(state='disabled')
 
+root.grid_columnconfigure(0, weight=1, minsize=270)
+root.grid_rowconfigure(4, weight=1)
+root.resizable(True, True)
 root.mainloop()
