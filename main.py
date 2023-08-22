@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter import ttk, filedialog
+from tkinter import ttk, filedialog, messagebox
 import subprocess
 import threading
 import os
@@ -63,6 +63,9 @@ output_text.grid(row=4, column=0, sticky='w')
 def run_robocopy():
     source = source_var.get()
     destination = destination_var.get()
+    if not source or not destination or not os.path.exists(source) or not os.path.exists(destination):
+        messagebox.showerror("Error", "Please specify valid source and destination directories.")
+        return
     option = options_dict[options_var.get()]
     threads = threads_var.get()
     command = f'robocopy "{source}" "{destination}" {option}'
