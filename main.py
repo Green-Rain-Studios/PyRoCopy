@@ -6,7 +6,7 @@ import os
 
 root = tk.Tk()
 root.title("PyRoCopy")
-root.geometry('360x270')
+root.geometry('700x270')
 
 # Get the maximum number of threads
 max_threads = os.cpu_count()
@@ -57,7 +57,7 @@ run_button = tk.Button(root, text="Run Robocopy", command=lambda: threading.Thre
 run_button.grid(row=3, column=0, sticky='w')
 
 output_text = tk.Text(root, width=30, height=10)
-output_text.grid(row=4, column=0, sticky='w')
+output_text.grid(row=4, column=0, sticky='nsew')
 
 # Update the run_robocopy function
 def run_robocopy():
