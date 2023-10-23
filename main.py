@@ -3,6 +3,7 @@ from tkinter import ttk, filedialog, messagebox
 import subprocess
 import threading
 import os
+import json
 
 root = tk.Tk()
 root.title("PyRoCopy")
@@ -22,6 +23,27 @@ def browse_source():
 
 def browse_destination():
     destination_var.set(filedialog.askdirectory())
+
+def save_job():
+    job = {
+        "source": source_var.get(),
+        "destination": destination_var.get(),
+        "threads": threads_var.get(),
+        "option": options_var.get()
+    }
+    job_file_path = filedialog.asksaveasfilename(initialdir=os.path.join(os.getcwd(), 'jobs'), defaultextension=".json")
+    if job_file_path:  # Ensure a file name was selected
+        with open(job_file_path, 'w') as job_file:
+            json.dump(job, job_file)
+
+def load_job():
+    job_file_path = filedialog.askopenfilename(initialdir=os.path.join(os.getcwd(), 'jobs'), defaultextension=".json")
+    with open(job_file_path, 'r') as job_file:
+        job = json.load(job_file)
+    source_var.set(job["source"])
+    destination_var.set(job["destination"])
+    threads_var.set(job["threads"])
+    options_var.set(job["option"])
 
 # Create a label for the threads dropdown
 threads_label = tk.Label(root, text="CPU Threads")
@@ -55,6 +77,12 @@ options_var.set('Normal Copy')  # Set the default value
 
 run_button = tk.Button(root, text="Run Robocopy", command=lambda: threading.Thread(target=run_robocopy, daemon=True).start())
 run_button.grid(row=3, column=0, sticky='w')
+
+save_button = tk.Button(root, text="Save Job", command=save_job)
+save_button.grid(row=5, column=1, sticky='w')
+
+load_button = tk.Button(root, text="Load Job", command=load_job)
+load_button.grid(row=5, column=2, sticky='w')
 
 output_text = tk.Text(root, width=30, height=10)
 output_text.grid(row=4, column=0, sticky='nsew')
